@@ -5,7 +5,12 @@ This document describes the `POST /user/register` endpoint implemented in this p
 **Location**: [backend/controllers/user.controller.js](backend/controllers/user.controller.js)
 
 **Route**: [backend/routes/user.routes.js](backend/routes/user.routes.js)
-
+"email":"test@test1.com",
+    "password":"test_password""email":"test@test1.com",
+    "password":"test_password""email":"test@test1.com",
+    "password":"test_password""email":"test@test1.com",
+    "password":"test_password""email":"test@test1.com",
+    "password":"test_password"
 ## Description
 
 Creates a new user account. Validates the request body, hashes the password, stores the user in the database, and returns a JWT token and the created user object (password excluded).
@@ -118,3 +123,95 @@ curl -X POST http://localhost:3000/user/register \
 
 - Confirm the exact `fullname` validation logic if you want stricter checks (e.g., require both `firstname` and `lastname` separately).
 - Consider adding an API example for error scenarios (email already exists) with exact response shape.
+ 
+## User Login Endpoint
+
+This document describes the `POST /user/login` endpoint implemented in this project.
+
+**Location**: [backend/controllers/user.controller.js](backend/controllers/user.controller.js)
+
+**Route**: [backend/routes/user.routes.js](backend/routes/user.routes.js)
+
+### Description
+
+Authenticates an existing user. Validates the request body, checks the provided password against the stored hashed password, and returns a JWT token and the user object (password excluded) on success.
+
+### Endpoint
+
+- Method: `POST`
+- URL: `/user/login`
+
+### Request Body
+
+Content-Type: `application/json`
+
+Required JSON structure:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+Validation rules (as implemented in `user.routes.js`):
+
+- `email`: must be a valid email (uses `express-validator` `isEmail()`)
+- `password`: must be at least 6 characters long
+
+### Responses / Status Codes
+
+- `200 OK`
+  - Returned when authentication succeeds. Response body contains `token` and `user`.
+
+- `400 Bad Request`
+  - Returned for validation errors. The response contains `errors` (from `express-validator`).
+
+- `401 Unauthorized`
+  - Returned when email is not found or password does not match. Response body contains `{ message: 'Invalid email or password' }`.
+
+- `500 Internal Server Error`
+  - Returned for unexpected server/database errors.
+
+#### Example Success Response (200)
+
+```json
+{
+  "token": "<jwt-token-here>",
+  "user": {
+    "_id": "<user-id>",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john@example.com",
+    "socketId": null
+  }
+}
+```
+
+#### Example Validation Error (400)
+
+```json
+{
+  "errors": [
+    { "msg": "Invalid email address", "param": "email", "location": "body" }
+  ]
+}
+```
+
+### Usage Examples
+
+Curl example:
+
+```bash
+curl -X POST http://localhost:3000/user/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "secret123"
+  }'
+```
+
+### Implementation notes
+
+- The controller uses `validationResult` from `express-validator` to return validation errors.
+- The controller fetches the user with `userModel.findOne({ email }).select('+password')` and then uses `user.comparePassword()` to validate the password.
+- On success the controller calls `user.generateAuthToken()` to create a JWT.
