@@ -215,3 +215,110 @@ curl -X POST http://localhost:3000/user/login \
 - The controller uses `validationResult` from `express-validator` to return validation errors.
 - The controller fetches the user with `userModel.findOne({ email }).select('+password')` and then uses `user.comparePassword()` to validate the password.
 - On success the controller calls `user.generateAuthToken()` to create a JWT.
+
+## User Profile Endpoint
+
+**Location**: [backend/controllers/user.controller.js](backend/controllers/user.controller.js)
+
+**Route**: [backend/routes/user.routes.js](backend/routes/user.routes.js)
+
+### Description
+
+Returns the authenticated user's profile. The route uses the `authUser` middleware to authenticate the request and attaches the user to `req.user`.
+
+### Endpoint
+
+- Method: `GET`
+- URL: `/user/profile`
+
+### Authentication
+
+Requires a valid JWT. The server accepts the token either as an HTTP-only cookie named `token` or in the `Authorization` header as `Bearer <token>`.
+
+### Responses / Status Codes
+
+- `200 OK` — Returns the authenticated user object: `{ user: req.user }`.
+- `401 Unauthorized` — Returned when the token is missing, expired, invalid, or the user cannot be authenticated.
+
+### Example Success Response (200)
+
+```json
+{
+  "user": {
+    "_id": "<user-id>",
+    "fullname": { "firstname": "John", "lastname": "Doe" },
+    "email": "john@example.com",
+    "socketId": null
+  }
+}
+```
+
+### Usage Examples
+
+With `Authorization` header:
+
+```bash
+curl -X GET http://localhost:3000/user/profile \
+  -H "Authorization: Bearer <jwt-token-here>"
+```
+
+With cookie:
+
+```bash
+curl -X GET http://localhost:3000/user/profile \
+  --cookie "token=<jwt-token-here>"
+```
+
+## User Logout Endpoint
+
+**Location**: [backend/controllers/user.controller.js](backend/controllers/user.controller.js)
+
+**Route**: [backend/routes/user.routes.js](backend/routes/user.routes.js)
+
+### Description
+
+Logs the user out by clearing the `token` cookie and blacklisting the provided JWT so it cannot be used again. Blacklisted tokens are stored with a 24-hour TTL (see `backend/models/blacklistToken.model.js`).
+
+### Endpoint
+
+- Method: `GET`
+- URL: `/user/logout`
+
+### Authentication
+
+Requires a valid JWT (cookie `token` or `Authorization: Bearer <token>`). The route uses `authUser` middleware.
+
+### Responses / Status Codes
+
+- `200 OK` — `{ message: 'Logged out successfully' }` after clearing the cookie and adding the token to the blacklist.
+- `401 Unauthorized` — If the request is unauthenticated.
+
+### Example Success Response (200)
+
+```json
+{
+  "message": "Logged out successfully"
+}
+```
+
+### Usage Examples
+
+Using `Authorization` header:
+
+```bash
+curl -X GET http://localhost:3000/user/logout \
+  -H "Authorization: Bearer <jwt-token-here>"
+```
+
+Using cookie:
+
+```bash
+curl -X GET http://localhost:3000/user/logout \
+  --cookie "token=<jwt-token-here>"
+```
+
+Notes:
+
+- The controller clears the `token` cookie (so subsequent browser requests will not send it).
+- The server also persists the raw token to the blacklist collection so the token cannot be reused until it expires (blacklist TTL is 24 hours).
+- If you rely on the blacklist, ensure the authentication middleware checks the blacklist collection when validating tokens.
