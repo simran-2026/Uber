@@ -322,3 +322,93 @@ Notes:
 - The controller clears the `token` cookie (so subsequent browser requests will not send it).
 - The server also persists the raw token to the blacklist collection so the token cannot be reused until it expires (blacklist TTL is 24 hours).
 - If you rely on the blacklist, ensure the authentication middleware checks the blacklist collection when validating tokens.
+
+## Captain Register Endpoint
+
+**Location**: [backend/controllers/captain.controller.js](backend/controllers/captain.controller.js)
+
+**Route**: [backend/routes/captain.routes.js](backend/routes/captain.routes.js)
+
+### Description
+
+Registers a new captain (driver). Validates the request body, hashes the password, stores the captain in the database, and returns a JWT token and the created captain object (password excluded).
+
+### Endpoint
+
+- Method: `POST`
+- URL: `/captains/register`
+
+### Request Body
+
+Content-Type: `application/json`
+
+Required JSON structure:
+
+```json
+{
+  "fullname": { "firstname": "string", "lastname": "string" },
+  "email": "captain@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "red",
+    "plate": "MP 04 XY 1234",
+    "capacity": 3,
+    "vehicleType": "car"
+  },
+  "location": { "lat": 12.9716, "lng": 77.5946 }
+}
+```
+
+Validation rules (as implemented in `captain.routes.js`):
+
+- `email`: must be a valid email (trimmed and normalized first)
+- `fullname.firstname`: required, at least 3 characters
+- `fullname.lastname`: optional, at least 3 characters if provided
+- `password`: at least 6 characters
+- `vehicle.color`: at least 3 characters
+- `vehicle.plate`: at least 3 characters
+- `vehicle.capacity`: integer >= 1
+- `vehicle.vehicleType`: one of `car`, `motorcycle`, `auto`
+- `location.lat` and `location.lng`: required, must be numbers
+
+### Responses / Status Codes
+
+- `201 Created` — Returned when the captain is successfully created. Response body contains an object with `token` and `captain`.
+- `400 Bad Request` — Returned for validation errors. Response contains `errors` (from `express-validator`) or `{ message: 'Captain already exist' }` when the email is already taken.
+
+### Example Success Response (201)
+
+```json
+{
+  "token": "<jwt-token-here>",
+  "captain": {
+    "_id": "<captain-id>",
+    "fullname": { "firstname": "Jane", "lastname": "Roe" },
+    "email": "jane.roe@example.com",
+    "vehicle": { "color": "red", "plate": "MP 04 XY 1234", "capacity": 3, "vehicleType": "car" },
+    "location": { "lat": 12.9716, "lng": 77.5946 }
+  }
+}
+```
+
+### Usage Examples
+
+Curl example:
+
+```bash
+curl -X POST http://localhost:3000/captains/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": { "firstname": "Jane", "lastname": "Roe" },
+    "email": "jane.roe@example.com",
+    "password": "secret123",
+    "vehicle": { "color": "red", "plate": "MP 04 XY 1234", "capacity": 3, "vehicleType": "car" },
+    "location": { "lat": 12.9716, "lng": 77.5946 }
+  }'
+```
+
+### Implementation notes
+
+- The route validators trim/normalize the email and require `location.lat` and `location.lng` to be present and numeric.
+- The controller uses `captainService.createCaptain()` which persists `location` to the model.
+- The model enforces schema validation for required fields (vehicle properties, location, fullname).
