@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const{body} = require('express-validator');
 const captainController = require('../controllers/captain.controller');
-
+const authMiddleware = require('../middleware/auth.middleware');
 
 
 router.post('/register', [
@@ -40,6 +40,21 @@ router.post('/register', [
   body('location.lat').exists().withMessage('Latitude required').isFloat().withMessage('Latitude must be a number'),
   body('location.lng').exists().withMessage('Longitude required').isFloat().withMessage('Longitude must be a number'),
 ], captainController.registerCaptain);
+
+
+
+router.post('/login',[
+  body('email').trim().normalizeEmail().isEmail().withMessage('Invalid email address'),
+  body('password').exists().withMessage('Password is required')
+], 
+captainController.loginCaptain
+)
+
+
+router.post('/profile', authMiddleware.authCaptain,captainController.getCaptainProfile);
+
+
+router.get('/logout', authMiddleware.authCaptain, captainController.logoutCaptain);
 
 
 module.exports = router;
