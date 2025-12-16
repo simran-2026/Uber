@@ -210,6 +210,61 @@ curl -X POST http://localhost:3000/user/login \
   }'
 ```
 
+### Captain Profile Endpoint
+
+**Location**: [backend/controllers/captain.controller.js](backend/controllers/captain.controller.js)
+
+**Route**: [backend/routes/captain.routes.js](backend/routes/captain.routes.js)
+
+### Description
+
+Returns the authenticated captain's profile. The route uses the `authCaptain` middleware to authenticate the request and attaches the captain to `req.captain`.
+
+### Endpoint
+
+- Method: `GET`
+- URL: `/captains/profile`
+
+### Authentication
+
+Requires a valid JWT. The server accepts the token either as an HTTP-only cookie named `token` or in the `Authorization` header as `Bearer <token>`.
+
+### Responses / Status Codes
+
+- `200 OK` — Returns the authenticated captain object: `{ captain: req.captain }`.
+- `401 Unauthorized` — Returned when the token is missing, expired, invalid, blacklisted, or the captain cannot be authenticated.
+
+### Example Success Response (200)
+
+```json
+{
+  "captain": {
+    "_id": "<captain-id>",
+    "fullname": { "firstname": "Jane", "lastname": "Roe" },
+    "email": "jane.roe@example.com",
+    "vehicle": { "color": "red", "plate": "MP 04 XY 1234", "capacity": 3, "vehicleType": "car" },
+    "location": { "lat": 12.9716, "lng": 77.5946 }
+  }
+}
+```
+
+### Usage Examples
+
+With `Authorization` header:
+
+```bash
+curl -X GET http://localhost:3000/captains/profile \
+  -H "Authorization: Bearer <jwt-token-here>"
+```
+
+With cookie:
+
+```bash
+curl -X GET http://localhost:3000/captains/profile \
+  --cookie "token=<jwt-token-here>"
+```
+
+
 ### Implementation notes
 
 - The controller uses `validationResult` from `express-validator` to return validation errors.
