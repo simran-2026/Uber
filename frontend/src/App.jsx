@@ -41,6 +41,7 @@ const App = () => {
    path ='/captain-home'
    element={<CaptainHome/>}
    />
+   
    </Routes>
    
  </div>

@@ -7,59 +7,65 @@ import {useNavigate} from 'react-router-dom'
 
 
 
-const captainSignup = () => {
+const CaptainSignup = () => {
 
   const navigate = useNavigate()
 
-   const [email, setEmail] = useState('')
-     const [password,setPassword] = useState('')
-     const [firstName,setFirstName] = useState('')
-     const [ lastName , setLastName] = useState('')
-    //  const [captainData,setcaptainData] = useState('')
-    const [vehicleColor, setVehicleColor] = useState('')
-    const [vehiclePlate, setVehiclePlate] = useState('')
-    const [vehicleCapacity, setVehicleCapacity] = useState('')
-    const [vehicleType, setVehicleType] = useState('')
-     
+  const [email, setEmail] = useState('')
+  const [password,setPassword] = useState('')
+  const [firstName,setFirstName] = useState('')
+  const [lastName , setLastName] = useState('')
+  const [vehicleColor, setVehicleColor] = useState('')
+  const [vehiclePlate, setVehiclePlate] = useState('')
+  const [vehicleCapacity, setVehicleCapacity] = useState('')
+  const [vehicleType, setVehicleType] = useState('')
 
-    const{captain,setCaptain} = React.useContext(CaptainDataContext)
-   
-     const submithandler= async(e) =>{
-      e.preventDefault()
-      setcaptainData({
-       fullName:{
-         firstName:firstName,
-         lastName:lastName,
-       },
-       email:email,
-       password:password,
-       vehicle:{
-        color:vehicleColor,
-        plate:vehiclePlate,
-        capacity:vehicleCapacity,
-        type:vehicleType
-       }
-      })
-   
-      //  console.log(userData);
-       
-       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,captainData)
-       if(response ===201){
+  const { captain, setCaptain } = React.useContext(CaptainDataContext)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const payload = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
+      email: email,
+      password: password,
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: Number(vehicleCapacity),
+        vehicleType: vehicleType,
+      },
+      location: {
+      lat: 0,
+      lng: 0,
+    },
+    }
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, payload)
+
+      if (response && response.status === 201) {
         const data = response.data
-        setCaptain(data.captain)
-        localStorage.setItem('token',data.token)
+        setCaptain && setCaptain(data.captain)
+        if (data.token) localStorage.setItem('token', data.token)
         navigate('/captain-home')
-       }
-   
-       setEmail('')
-       setFirstName('')
-       setLastName('')
-       setPassword('')
-       setVehicleColor('')
-       setVehiclePlate('')
-       setVehicleCapacity('')
-       setVehicleType('')
-       }
+      }
+    } catch (err) {
+      console.error('Captain signup error:', err)
+    }
+
+    setEmail('')
+    setFirstName('')
+    setLastName('')
+    setPassword('')
+    setVehicleColor('')
+    setVehiclePlate('')
+    setVehicleCapacity('')
+    setVehicleType('')
+  }
    
 
 
@@ -71,7 +77,7 @@ const captainSignup = () => {
        <img  className= 'w-20 mr-5 mb-7' src="https://tse1.mm.bing.net/th/id/OIP.Pmb91LFXkoCFePQx5GMr5AHaH0?pid=Api&h=220&P=0" alt="" />
     
 
-      <form onSubmit ={(e) => { submitHandler(e) }}>
+      <form onSubmit ={handleSubmit}>
         
         <h3 className='text-base font-medium mb-2 '> What's our Captain's name</h3>
 
@@ -179,11 +185,11 @@ const captainSignup = () => {
               <option value="" disabled>Select Vehicle Type</option>
               <option value="car">Car</option>
               <option value="auto">Auto</option>
-              <option value="moto">Moto</option>
+              <option value="motorcycle">Moto</option>
             </select>
           </div>
 
-        <button className='bg-[#111] text-white font-semibold mb-3 rounded px-4 py-2 w-full text-lg placeholder:text-base'>
+        <button type="submit" className='bg-[#111] text-white font-semibold mb-3 rounded px-4 py-2 w-full text-lg placeholder:text-base'>
           Create Captain Account</button>
           
            </form>
@@ -202,4 +208,4 @@ const captainSignup = () => {
   )
 }
 
-export default captainSignup
+export default CaptainSignup
