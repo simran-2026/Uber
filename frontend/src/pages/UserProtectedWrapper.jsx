@@ -1,52 +1,48 @@
-import React,{useContext,useEffect} from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { UserDataContext } from '../context/userContext'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const UsereProtectedWrapper = ({children}) =>{
+const UserProtectedWrapper = ({ children }) => {
 
-    // const {user} = useContext(UserDataContext)
-    const token = localStorage.getItem('token')
-    
-    const navigate = useNavigate()
-    const {user,setUser} = useContext(UserDataContext)
-    const[IsLoading, setIsLoading] = useState(true)
+  const token = localStorage.getItem('token')
+  const navigate = useNavigate()
+  const { user, setUser } = useContext(UserDataContext)
+  const [isLoading, setIsLoading] = useState(true)
 
+  useEffect(() => {
 
-   useEffect(()=>{
-     if(!token){
-        navigate('/login')
+    if (!token) {
+      navigate('/login')
+      return
     }
 
-     axios.get(`${import.meta.env.VIYE_BASE_URL}/user/profile`,{
-        header:{
-            Authorization:`Bearer ${token}`
-        }
-    }).then(response=>{
-        if(response.status===200){
-            setUser(response.data.user)
-        }
-    }).catch(err=>{
+    axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (response.status === 200) {
+        setUser(response.data.user)
+      }
+    })
+    .catch(err => {
       console.log(err)
       localStorage.removeItem('token')
       navigate('/login')
     })
+    .finally(() => {
+      setIsLoading(false)
+    })
 
-   },[token])
+  }, [token, navigate, setUser])
 
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
-    if(IsLoading){
-      return(
-        <div>Loading..</div>
-      )
-    } 
-
-    
-  return (
-   <>
-   {children}
-   </>
-  )
+  return <>{children}</>
 }
 
-export default UsereProtectedWrapper
+export default UserProtectedWrapper

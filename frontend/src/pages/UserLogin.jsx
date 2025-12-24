@@ -11,7 +11,7 @@ const UserLogin = () => {
   const [ password, setPassword ] = React.useState(''); 
   const  [userData , setUserData] = React.useState({});
  
-  const {user,setuser} = useContext(UserDataContext)
+  const {user,setUser} = useContext(UserDataContext)
   const navigate = useNavigate()
 
 
@@ -32,7 +32,7 @@ const UserLogin = () => {
 
      if (response.status === 200) {
        const data = response.data;
-       setuser(data.user)
+       setUser(data.user)
        localStorage.setItem('token', data.token)
        navigate('/home')
      }
