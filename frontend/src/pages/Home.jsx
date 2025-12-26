@@ -10,7 +10,11 @@ const Home = () => {
      const[destination,setDestination]  = useState('')
      const[panelOpen,setpanelOpen ] = useState(false)
      const panelRef   = useRef(null)
+     const vehiclePanelRef = useRef(null)
      const panelCloseRef = useRef(null)
+     const [vehiclePanel, setvehiclePanel] = useState(false)
+
+
 
      const submitHandler =(e) =>{
       e.preventDefault()
@@ -36,6 +40,18 @@ const Home = () => {
       }
     },[panelOpen])
 
+
+    useGSAP(function(){
+      if(vehiclePanel){
+      gsap.to(vehiclePanelRef.current,{
+        transform:'translateY(0)'
+      })
+      }else{
+        gsap.to(vehiclePanelRef.current,{
+          transform:'translateY(100%)'
+        })
+      }
+    },[vehiclePanel])
 
 
 
@@ -88,13 +104,13 @@ const Home = () => {
        </div>
        
        <div  ref={panelRef} className='bg-white h-0'>
-        <LocationSearchPanel/>
+        <LocationSearchPanel  setpanelOpen={setpanelOpen} setvehiclePanel={setvehiclePanel} />
        </div>
       
       </div>
      
     
-     <div className='fixed w-full z-10 bottom-0  bg-white px-3 py-8'>
+     <div  ref= {vehiclePanelRef}className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-8'>
        <h3 className=' text-2xl font-semibold mb-5 '> Choose Your ride</h3>
     
       <div className=' flex  border-2 border-white  active:border-black rounded-xl w-full p-3 mb-2   item-center justify-between'>

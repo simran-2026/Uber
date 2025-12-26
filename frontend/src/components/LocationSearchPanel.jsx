@@ -1,37 +1,36 @@
 import React from 'react'
 
-const LocationSearchPanel = () => {
+const LocationSearchPanel = (props) => {
+ 
+    //sample array of loaction
+    const location =[
+        "Circular road , canara Bank near kapoor cafe, Hathras",
+        " 24B near malhotra cafe Sheriyan Coding School,Bhopal",
+        "22C near Sharma's Cafe sheriyan coding school ,Mendu"
+        
+    ]
+
+
   return (
     <div>
         {/* sample data*/}
 
-        <div className = 'flex  gap-2 border-2 p-3 border-white active:border-black rounded-xl  my-4 items-center justify-start'>
+         {
+            location.map(function(elem){
+                return <div onClick={()=>{
+                    props.setvehiclePanel(true)
+                    props.setpanelOpen(false)
+                }} className = 'flex  gap-4 border-2 py-1 ml-2 border-white active:border-black rounded-xl  my-2 items-center justify-start'>
             <h2 className='bg-[#eee] font-medium h-10 items-center flex justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
             <h4 className ='font-medium'>
-                Circular road ,Near Canara Bank, Nagla Emily, Hathras,U.P
+               {elem}
             </h4>
         </div>
 
-         <div className = 'flex  gap-2 border-2 p-3 border-white active:border-black rounded-xl my-4 items-center justify-start'>
-            <h2 className='bg-[#eee] font-medium h-10 items-center flex justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
-            <h4 className ='font-medium'>
-                Circular road ,Near Canara Bank, Nagla Emily, Hathras,U.P
-            </h4>
-        </div>
+            })
+         }
 
-         <div className = 'flex  gap-2 border-2 p-3 border-white active:border-black rounded-xl my-4 items-center justify-start'>
-            <h2 className='bg-[#eee] font-medium h-10 items-center flex justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
-            <h4 className ='font-medium'>
-                Circular road ,Near Canara Bank, Nagla Emily, Hathras,U.P
-            </h4>
-        </div>
 
-         <div className = 'flex  gap-2 border-2 p-3 border-white active:border-black rounded-xl my-4 items-center justify-start'>
-            <h2 className='bg-[#eee] font-medium h-10 items-center flex justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
-            <h4 className ='font-medium'>
-                Circular road ,Near Canara Bank, Nagla Emily, Hathras,U.P
-            </h4>
-        </div>
 
 
     </div>
