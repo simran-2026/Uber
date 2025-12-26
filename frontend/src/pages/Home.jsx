@@ -3,6 +3,7 @@ import {useGSAP} from '@gsap/React'
 import gsap from 'gsap'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel'
+import VehiclePanel from '../components/VehiclePanel'
 
 
 const Home = () => {
@@ -111,55 +112,8 @@ const Home = () => {
      
     
      <div  ref= {vehiclePanelRef}className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-8'>
-       <h3 className=' text-2xl font-semibold mb-5 '> Choose Your ride</h3>
-    
-      <div className=' flex  border-2 border-white  active:border-black rounded-xl w-full p-3 mb-2   item-center justify-between'>
-         <img  className ='h-12'src="https://tse3.mm.bing.net/th/id/OIP.Y_gX5xiVCzVgpmDuQ1h6ogHaEK?pid=Api&h=220&P=0" alt="" />
-      <div className=' w-1/2'>
-        <h4 className='font-medium text-base'>RideGo <span> <i className="ri-user-fill"></i>4</span></h4>
-        <h5 className ='font-medium text-sm'>2 mins away </h5>
-        <p className ='font-normal text-sm'>Affordable, compact rides</p>
+      <VehiclePanel setvehiclePanel={setvehiclePanel}/>
       </div>
-      <h2 className=' text-2xl font-semibold'>₹192</h2>
-      </div>
-
-      <div className=' flex w-full p-3 mb-2  border-2  border-white  active:border-black rounded-xl  item-center justify-between'>
-         <img  className ='h-16'src="https://tse4.mm.bing.net/th/id/OIP.ymjpxr4RPlwbLenCbbpYywHaE7?pid=Api&h=220&P=0" alt="" />
-      <div className=' w-1/2'>
-        <h4 className='font-medium text-base'>RideGoPremium <span> <i className="ri-user-fill"></i>6</span></h4>
-        <h5 className ='font-medium text-sm'>5 mins away </h5>
-        <p className ='font-normal text-sm'>Affordable, compact rides</p>
-      </div>
-      <h2 className=' text-2xl font-semibold'>₹202</h2>
-      </div>
-     
-
-      <div className=' flex w-full p-3 mb-2  border-2 border-white  active:border-black rounded-xl  item-center justify-between'>
-         <img  className ='h-16'src="https://tse4.mm.bing.net/th/id/OIP.gERohywpalGF3NjolmHt5wHaE7?pid=Api&h=220&P=0" alt="" />
-      <div className=' w-1/2'>
-        <h4 className='font-medium text-base'>Auto <span> <i className="ri-user-fill"></i>3</span></h4>
-        <h5 className ='font-medium text-sm'>5 mins away </h5>
-        <p className ='font-normal text-sm'>Affordable, compact rides</p>
-      </div>
-      <h2 className=' text-2xl font-semibold'>₹80</h2>
-      </div>
-
-
-
-    <div className=' flex w-full p-3 mb-2  border-2   border-white  active:border-black rounded-xl  item-center justify-between'>
-         <img  className ='h-18'src="https://png.pngtree.com/png-clipart/20211102/original/pngtree-bike-vector-png-image_6914691.png" alt="" />
-      <div className=' w-1/2'>
-        <h4 className='font-medium text-base'>Moto<span> <i className="ri-user-fill"></i>1</span></h4>
-        <h5 className ='font-medium text-sm'>2 mins away </h5>
-        <p className ='font-normal text-sm'>Affordable, compact rides</p>
-      </div>
-      <h2 className=' text-2xl font-semibold'>₹60</h2>
-      </div>
-
-
-
-    
-     </div>
 
 
     </div>

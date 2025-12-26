@@ -16,8 +16,8 @@ const LocationSearchPanel = (props) => {
         {/* sample data*/}
 
          {
-            location.map(function(elem){
-                return <div onClick={()=>{
+            location.map(function(elem,idx){
+                return <div key={idx} onClick={()=>{
                     props.setvehiclePanel(true)
                     props.setpanelOpen(false)
                 }} className = 'flex  gap-4 border-2 py-1 ml-2 border-white active:border-black rounded-xl  my-2 items-center justify-start'>
