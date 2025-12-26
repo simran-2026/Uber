@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel'
 import VehiclePanel from '../components/VehiclePanel'
+import ConfirmRide from '../components/ConfirmRide'
 
 
 const Home = () => {
@@ -13,8 +14,9 @@ const Home = () => {
      const panelRef   = useRef(null)
      const vehiclePanelRef = useRef(null)
      const panelCloseRef = useRef(null)
+     const ConfirmRidePanelRef = useRef(null)
      const [vehiclePanel, setvehiclePanel] = useState(false)
-
+     const [ConfirmRidePanel, setConfirmRidePanel] = useState(false)
 
 
      const submitHandler =(e) =>{
@@ -53,6 +55,21 @@ const Home = () => {
         })
       }
     },[vehiclePanel])
+
+
+    useGSAP(function(){
+      if(ConfirmRidePanel){
+      gsap.to(ConfirmRidePanelRef.current,{
+        transform:'translateY(0)'
+      })
+      }else{
+        gsap.to(ConfirmRidePanelRef.current,{
+          transform:'translateY(100%)'
+        })
+      }
+    },[ConfirmRidePanel])
+
+
 
 
 
@@ -111,10 +128,14 @@ const Home = () => {
       </div>
      
     
-     <div  ref= {vehiclePanelRef}className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-8'>
-      <VehiclePanel setvehiclePanel={setvehiclePanel}/>
+     <div  ref= {vehiclePanelRef}className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-8 pt-12'>
+      <VehiclePanel setConfirmRidePanel = {setConfirmRidePanel} setvehiclePanel={setvehiclePanel}/>
       </div>
 
+
+     <div  ref= {ConfirmRidePanelRef}className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-6 pt-12'>
+      <ConfirmRide/>
+      </div>
 
     </div>
   )
