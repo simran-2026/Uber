@@ -1,18 +1,19 @@
 import React from 'react'
 
-const ConfirmRide = (props) => {
+const LookingForDriver = (props) => {
   return (
-    <div>
+    
+         <div>
          <h5 onClick={()=>{
-          props.setConfirmRidePanel(false)
+          props.setvehicleFound(false)
         }} className=' p-3 w-[93%] absolute text-center top-0'>
-          <i className=" text-xl text-gray-200 ri-arrow-down-wide-line"></i>
+          <i className=" text-xl tetx-gray-200 ri-arrow-down-wide-line"></i>
           </h5> 
 
-           <h3 className=' text-2xl font-semibold mb-5 '> Confirm Your ride</h3>
+           <h3 className=' text-2xl font-semibold mb-5 '> Looking For Driver</h3>
 
         <div className='flex justify-between gap-2 flex-col  items-center'>
-            <img  className ='h-24'src="https://tse3.mm.bing.net/th/id/OIP.Y_gX5xiVCzVgpmDuQ1h6ogHaEK?pid=Api&h=220&P=0" alt="" />
+            <img  className ='h-25'src="https://tse3.mm.bing.net/th/id/OIP.Y_gX5xiVCzVgpmDuQ1h6ogHaEK?pid=Api&h=220&P=0" alt="" />
             
             <div className='w-full mt-5'>
                 <div className='flex items-center gap-5 p-3  border-b-2'>
@@ -42,17 +43,14 @@ const ConfirmRide = (props) => {
                 </div>
             </div>
 
-            <button onClick={()=>{
-               
-                props.setConfirmRidePanel(false)
-                 props.setVehicleFound(true)
-                 props.setvehiclePanel(false)
-            }} className='w-full mt-5  bg-green-600 font-semibold p-2 rounded-lg '>Confirm</button>
-        </div>
+         </div>
 
 
     </div>
+
+
+    
   )
 }
 
-export default ConfirmRide
+export default LookingForDriver
