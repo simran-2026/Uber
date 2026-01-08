@@ -1,6 +1,13 @@
 import React from 'react'
+import { useState } from 'react'
+import {Link} from 'react-router-dom'
 
-const RidePopUp = (props) => {
+const ConfirmRidePopUp = (props) => {
+    const [otp, setotp] = useState("")
+
+    const submitHandler = (e) =>{
+        e.preventDefault();
+    }
   return (
     <div>
         <div>
@@ -11,9 +18,9 @@ const RidePopUp = (props) => {
           <i className=" text-xl text-gray-200 ri-arrow-down-wide-line"></i>
           </h5> 
 
-           <h3 className=' text-2xl font-semibold '>New Ride Available</h3>
+           <h3 className=' text-2xl font-semibold '>Confirm This Ride</h3>
         
-        <div className='flex items-center mt-4 bg-gray-50  p-3 bg-yellow-400 rounded-lg  justify-between '>
+        <div className='flex items-center mt-4 bg-gray-50  p-3  rounded-lg  bg-gray-200 border-4 border-yellow-400 justify-between '>
             <div className=' flex items-center gap-3'>
                 <img  className='h-12 w-12 rounded-full object-cover ' src="https://up.yimg.com/ib/th/id/OIP.XMa6K9nT4_GC-DOq_ReaigHaLH?pid=Api&rs=1&c=1&qlt=95&w=76&h=114" alt="" />
                 <h4 className='text-lg font-medium'>Harsh Patel</h4>
@@ -50,20 +57,22 @@ const RidePopUp = (props) => {
                 </div>
                 </div>
             </div>
+          
 
-           <div className='flex items-center w-full  justify-between'>
-             <button onClick={()=>{
-                props.setConfirmRidePopPanel(true)
-                props.setridePopPanel(false)
-            
-            }} className=' mt-5  bg-green-600 text-white font-semibold p-2 px-8  rounded-lg '>Accept</button>
+          <div className=' mt-6 w-full'>
+             <form onSubmit={(e)=>{
+                submitHandler(e)
+             }}> 
+             <input value={otp} onChange={(e)=>setotp(e.target.value)} type="text" className='bg-[#eee] px-6 py-4 text-lg font-mono rounded-lg w-full mt-3' placeholder='Enter OTP' />
+                 <Link to='/captain-riding' className='w-full mt-5 flex justify-center  bg-green-600 text-white font-semibold p-2 rounded-lg '>Confirm</Link>
              
               <button onClick={()=>{
-               
                props.setridePopPanel(false)
-            }} className=' mt-5  bg-gray-400 text-gray-700 font-semibold p-2 px-8   rounded-lg '>Ignore</button>
+               props.setConfirmRidePopPanel(false)
+            }} className='w-full mt-5  bg-red-600 text-white-700 font-semibold p-2 rounded-lg '>Cancel</button>
       
-           </div>
+             </form>
+          </div>
       
         </div>
 
@@ -73,4 +82,4 @@ const RidePopUp = (props) => {
   )
 }
 
-export default RidePopUp
+export default ConfirmRidePopUp
