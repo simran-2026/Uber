@@ -1,40 +1,34 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const LocationSearchPanel = (props) => {
- 
-    //sample array of loaction
-    const location =[
-        "Circular road , canara Bank near kapoor cafe, Hathras",
-        " 24B near malhotra cafe Sheriyan Coding School,Bhopal",
-        "22C near Sharma's Cafe sheriyan coding school ,Mendu"
-        
-    ]
+const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPickup, setDestination, activeField }) => {
+    const handleSuggestionClick = (suggestion) => {
+        if (activeField === 'pickup') {
+            setPickup(suggestion);
+        } else if (activeField === 'destination') {
+            setDestination(suggestion);
+        }
+        setVehiclePanel(true);
+        setPanelOpen(false);
+    };
 
-
-  return (
-    <div>
-        {/* sample data*/}
-
-         {
-            location.map(function(elem,idx){
-                return <div key={idx} onClick={()=>{
-                    props.setvehiclePanel(true)
-                    props.setpanelOpen(false)
-                }} className = 'flex  gap-4 border-2 py-1 ml-2 border-white active:border-black rounded-xl  my-2 items-center justify-start'>
-            <h2 className='bg-[#eee] font-medium h-10 items-center flex justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
-            <h4 className ='font-medium'>
-               {elem}
-            </h4>
+    return (
+        <div>
+            {/* Display fetched suggestions */}
+            {suggestions.map((elem, idx) => (
+                <div
+                    key={idx}
+                    onClick={() => handleSuggestionClick(elem)}
+                    className="flex gap-4 border-2 p-3 border-gray-50 active:border-black rounded-xl items-center my-2 justify-start"
+                >
+                    <h2 className="bg-[#eee] h-8 flex items-center justify-center w-12 rounded-full">
+                        <i className="ri-map-pin-fill"></i>
+                    </h2>
+                    <h4 className="font-medium">{elem}</h4>
+                </div>
+            ))}
         </div>
+    );
+};
 
-            })
-         }
-
-
-
-
-    </div>
-  )
-}
-
-export default LocationSearchPanel
+export default LocationSearchPanel;

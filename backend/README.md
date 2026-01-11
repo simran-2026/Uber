@@ -467,3 +467,63 @@ curl -X POST http://localhost:3000/captains/register \
 - The route validators trim/normalize the email and require `location.lat` and `location.lng` to be present and numeric.
 - The controller uses `captainService.createCaptain()` which persists `location` to the model.
 - The model enforces schema validation for required fields (vehicle properties, location, fullname).
+
+# Backend API Documentation
+
+## Get Fare Endpoint
+
+**Location**: [backend/controllers/ride.controller.js](backend/controllers/ride.controller.js)
+
+**Route**: [backend/routes/ride.routes.js](backend/routes/ride.routes.js)
+
+### Description
+
+Calculates the estimated fare for a ride based on the pickup and destination locations.
+
+### Endpoint
+
+- Method: `GET`
+- URL: `/rides/fare`
+
+### Request Parameters
+
+- `pickup` (string, required): The pickup location.
+- `destination` (string, required): The destination location.
+
+### Responses / Status Codes
+
+- `200 OK`: Returns the estimated fare for each vehicle type.
+- `400 Bad Request`: Validation errors.
+- `500 Internal Server Error`: Unexpected server/database errors.
+
+#### Example Success Response (200)
+
+```json
+{
+  "fare": {
+    "auto": 120.5,
+    "car": 200.75,
+    "motorcycle": 80.25
+  }
+}
+```
+
+#### Example Validation Error (400)
+
+```json
+{
+  "errors": [
+    { "msg": "Invalid pickup location", "param": "pickup", "location": "query" },
+    { "msg": "Invalid destination", "param": "destination", "location": "query" }
+  ]
+}
+```
+
+### Usage Examples
+
+Curl example:
+
+```bash
+curl -X GET "http://localhost:3000/rides/fare?pickup=LocationA&destination=LocationB" \
+  -H "Authorization: Bearer <jwt-token-here>"
+```

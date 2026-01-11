@@ -4,7 +4,7 @@ import CaptainDetails from '../components/CaptainDetails'
 import RidePopUp from '../components/RidePopUp'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 import {useRef, useState} from 'react'
-import {useGSAP} from '@gsap/React'
+import {useGSAP} from '@gsap/react'
 import gsap from 'gsap'
 
 

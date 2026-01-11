@@ -1,6 +1,7 @@
 const rideModel = require('../models/ride.model');
 const mapsService = require('../services/maps.services');
-
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 
 
@@ -8,7 +9,11 @@ async function getfare(pickup,destination){
     if(!pickup || !destination){
         throw new Error('Pickup and destination are required');
     }
-   const distanceTime = await  mapsService.getDistanceTime(pickup,destination);
+   const distanceTime = await  mapsService.getDistanceAndTime(pickup,destination);
+
+   if (!distanceTime.distance || !distanceTime.duration) {
+    throw new Error('Invalid response from Distance Matrix API');
+}
 
    const baseFare={
     auto:30,
@@ -29,16 +34,25 @@ async function getfare(pickup,destination){
 
 
    const fare ={
-    auto: baseFare.auto +(distanceTime.distance * perKmRate.auto) + (distanceTime.time * perMinRate.auto),
-    car:baseFare.car +(distanceTime.distance * perKmRate.car) + (distanceTime.time * perMinRate.car),
-    motorcycle:baseFare.motorcycle +(distanceTime.distance * perKmRate.motorcycle) + (distanceTime.time * perMinRate.motorcycle),
+    auto:Math.round(baseFare.auto + ((distanceTime.distance.value / 1000 )* perKmRate.auto) + ((distanceTime.duration.value / 60) * perMinRate.auto)),
+    car: Math.round(baseFare.car + ((distanceTime.distance.value / 1000 )* perKmRate.car) + ((distanceTime.duration.value / 60 ) * perMinRate.car)),
+    motorcycle:Math.round(baseFare.motorcycle + ((distanceTime.distance.value / 1000 )* perKmRate.motorcycle) + ((distanceTime.duration.value / 60 )* perMinRate.motorcycle)),
    }
   return fare;
 
 }
+ 
+module.exports.getfare = getfare;
 
+function getOtp(num) {
+    function generateOtp(num) {
+        const otp = crypto.randomInt(Math.pow(10, num - 1), Math.pow(10, num)).toString();
+        return otp;
+    }
+    return generateOtp(num);
+}
 
-module.exports.createRide= async ({userModel,pickup,destination,vehicleType}) =>{
+module.exports.createRide= async ({user,pickup,destination,vehicleType}) =>{
     if(!user || !pickup || !destination || !vehicleType){
         throw new Error('All fields are required');
     }
@@ -46,9 +60,10 @@ module.exports.createRide= async ({userModel,pickup,destination,vehicleType}) =>
     const fare = await getfare(pickup,destination);
 
     const ride = new rideModel({
-        user: userModel._id,
+        user,
         pickup,
         destination,
+        otp: getOtp(6),
         fare:fare[vehicleType],
     });
     return ride;
