@@ -1,5 +1,5 @@
 const socketIo = require('socket.io');
-const userModel = require('./models/user.model');
+const userModel = require('./models/user.models');
 const captainModel = require('./models/captain.model');
 
 let io;
@@ -19,10 +19,15 @@ function initializeSocket(server) {
         socket.on('join', async (data) => {
             const { userId, userType } = data;
 
-            if (userType === 'user') {
-                await userModel.findByIdAndUpdate(userId, { socketId: socket.id });
-            } else if (userType === 'captain') {
-                await captainModel.findByIdAndUpdate(userId, { socketId: socket.id });
+            try {
+                if (userType === 'user') {
+                    await userModel.findByIdAndUpdate(userId, { socketId: socket.id });
+                } else if (userType === 'captain') {
+                    await captainModel.findByIdAndUpdate(userId, { socketId: socket.id });
+                }
+            } catch (error) {
+                console.error('Error updating socket ID:', error);
+                socket.emit('error', { message: 'Failed to update socket ID' });
             }
         });
 
@@ -34,12 +39,17 @@ function initializeSocket(server) {
                 return socket.emit('error', { message: 'Invalid location data' });
             }
 
-            await captainModel.findByIdAndUpdate(userId, {
-                location: {
-                    ltd: location.ltd,
-                    lng: location.lng
-                }
-            });
+            try {
+                await captainModel.findByIdAndUpdate(userId, {
+                    location: {
+                        ltd: location.ltd,
+                        lng: location.lng
+                    }
+                });
+            } catch (error) {
+                console.error('Error updating location:', error);
+                socket.emit('error', { message: 'Failed to update location' });
+            }
         });
 
         socket.on('disconnect', () => {

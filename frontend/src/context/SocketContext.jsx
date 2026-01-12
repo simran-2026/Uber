@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 
 export const SocketContext = createContext();
 
-const socket = io(`${import.meta.env.VITE_BASE_URL}`); // Replace with your server URL
+const socket = io(import.meta.env.VITE_BASE_URL || 'http://localhost:4000'); // Updated fallback URL to match backend port
 
 const SocketProvider = ({ children }) => {
     useEffect(() => {
@@ -16,9 +16,10 @@ const SocketProvider = ({ children }) => {
             console.log('Disconnected from server');
         });
 
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+        });
     }, []);
-
-
 
     return (
         <SocketContext.Provider value={{ socket }}>

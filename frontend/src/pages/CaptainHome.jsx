@@ -6,17 +6,75 @@ import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 import {useRef, useState} from 'react'
 import {useGSAP} from '@gsap/react'
 import gsap from 'gsap'
-
+import { SocketContext } from '../context/SocketContext'
+import { useContext } from 'react'
+import { CaptainDataContext } from '../context/captainContext'
+import { useEffect } from 'react'
 
 
 const CaptainHome = () => {
 
 
-  const [ridePopPanel, setridePopPanel] = useState(true);
+  const [ridePopPanel, setridePopPanel] = useState(false);
   const [ConfirmRidePopPanel, setConfirmRidePopPanel] = useState(false);
 
   const ridePopPanelRef = useRef(null);
   const ConfirmRidePopPanelRef = useRef(null);
+
+
+  const {socket}=useContext(SocketContext);
+  const {captain}=useContext(CaptainDataContext);
+
+  useEffect(() => {
+    socket.emit('join', { userId: captain._id ,
+      userType: 'captain' });
+    
+
+
+
+
+    const updateLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          socket.emit('update-location-captain', {
+            userId: captain._id,
+            location: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            }
+          });
+        });
+      }
+    }
+
+    const locationInterval = setInterval(updateLocation, 10000);
+    updateLocation(); // Initial call to set location immediately
+    // return () => clearInterval(locationInterval); 
+
+  }, []);
+
+  socket.on('new-ride',(data)=>{
+    console.log(data);
+    setRide(data);
+    setridePopPanel(true);
+  })
+
+
+  async function confirmRide(){
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/rides/confirm`,{ 
+      rideId: ride._id,
+      captainId: captain._id,
+
+     },{
+       headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+        
+      }
+     }
+
+    );
+  }
+
 
   useGSAP(function(){
       if(ridePopPanel){
@@ -68,12 +126,20 @@ const CaptainHome = () => {
       </div>
 
      <div ref = {ridePopPanelRef} className='fixed w-full z-10 translate-y-full bottom-0  bg-white px-3 py-8 pt-12'>
-        <RidePopUp setridePopPanel={setridePopPanel}  setConfirmRidePopPanel={setConfirmRidePopPanel} />
+        <RidePopUp
+        ride={ride}
+         setridePopPanel={setridePopPanel}  
+         setConfirmRidePopPanel={setConfirmRidePopPanel} 
+         confirmRide={confirmRide }
+         />
         </div>
 
 
         <div ref = {ConfirmRidePopPanelRef} className='fixed w-full  h-screen translate-y-full bottom-0  bg-white px-3 py-8 pt-12'>
-        <ConfirmRidePopUp setConfirmRidePopPanel={setConfirmRidePopPanel}  setridePopPanel={setridePopPanel} />
+        <ConfirmRidePopUp 
+       ride={ride}
+        setConfirmRidePopPanel={setConfirmRidePopPanel}  
+        setridePopPanel={setridePopPanel} />
         </div>
     </div>
   )
